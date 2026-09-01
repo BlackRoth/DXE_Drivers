@@ -14,6 +14,10 @@ To create a debug file to check whether the driver has been executed/loaded, use
 Now launch QEMU by using this command below.<br>
 ```qemu-system-x86_64 -bios Build/OvmfX64/DEBUG_GCC/FV/OVMF.fd -net none -serial file:serial.log```<br>
 
+To check if the driver loaded, grep the debug log for the DEBUG() string in ```HelloDxe.c```:<br>
+```grep "HelloWorldDxe: driver loaded" serial.log```<br>
+If missing, check "was discovered but not loaded" for the driver's GUID to confirm a Depex failure.
+
 The driver registers a callback on the Ready-To-Boot event instead of printing directly at load time. This means the message appears only after the console is fully connected and the standard boot-menu timeout has passed -- right before the first boot attempt.<br>
 
 An earlier version tried printing directly using a Depex on the console protocol, but that failed silently: the protocol existing isn't the same as the console being connected to a real device. Switching to Ready-To-Boot fixed this by guaranteeing the console is live.
